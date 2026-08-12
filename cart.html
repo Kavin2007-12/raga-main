@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Bag & Checkout — Raga Boutique</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/raga_favicon.png">
+  <meta name="description" content="Review your shopping cart items, apply promo discount codes, and complete your purchase securely at Raga Boutique.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              burgundy: '#702152',
+              burgundyLight: '#8b2968',
+              gold: '#d4b270',
+              goldDark: '#bfa061',
+              cream: '#faf6f0',
+              charcoal: '#2c2c2c',
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .cart-custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .cart-custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(250, 246, 240, 0.6);
+      border-radius: 4px;
+    }
+    .cart-custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(212, 178, 112, 0.6);
+      border-radius: 4px;
+    }
+    .cart-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #702152;
+    }
+  </style>
+</head>
+<body class="bg-brand-cream text-brand-charcoal min-h-screen flex flex-col">
+
+  <!-- Global Dynamic Header -->
+  <header id="global-header" class="w-full bg-white z-40"></header>
+
+  <!-- Title section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 w-full">
+    <h1 class="font-serif text-3xl font-bold text-brand-burgundy">Shopping Bag & Checkout</h1>
+    <div class="h-0.5 w-16 bg-brand-gold mt-3"></div>
+  </section>
+
+  <!-- Main section -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <!-- Empty Cart state -->
+    <div id="cart-empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center text-gray-500 bg-white border border-brand-gold/10 max-w-xl mx-auto shadow-sm">
+      <div class="p-4 bg-brand-cream/40 border border-brand-gold/15 rounded-full mb-4">
+        <svg class="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <h3 class="font-serif text-lg font-bold text-brand-burgundy mb-2">Your Shopping Bag is Empty</h3>
+      <p class="text-xs text-gray-400 max-w-[280px] mb-6">You haven't added any traditional Indian weaves to your bag yet.</p>
+      <a href="sarees.html" class="bg-brand-burgundy hover:bg-brand-burgundyLight text-white text-xs uppercase tracking-widest font-bold py-3.5 px-8 border-b-2 border-brand-gold transition duration-300">
+        Browse Our Collection
+      </a>
+    </div>
+
+    <!-- Active Cart contents layout (Two columns) -->
+    <div id="cart-main-layout" class="hidden flex flex-col lg:flex-row gap-8 items-start">
+      
+      <!-- Left Column: Cart Items List -->
+      <div id="cart-items-card" class="w-full lg:flex-1 bg-white p-6 sm:p-8 border border-brand-gold/20 shadow-md rounded-xl space-y-6 transition-all duration-300">
+        <div class="flex items-center justify-between border-b border-brand-gold/15 pb-4">
+          <h3 class="font-serif text-xl sm:text-2xl font-bold text-brand-burgundy">Shopping Bag Items</h3>
+          <span id="bag-count-badge" class="text-xs font-bold bg-brand-cream/80 text-brand-burgundy border border-brand-gold/30 px-3 py-1 rounded-full">0 Items</span>
+        </div>
+        <div id="cart-page-items-list" class="divide-y divide-brand-gold/15">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+      <!-- Right Column: Summary & Checkout Forms -->
+      <div class="w-full lg:w-[420px] space-y-6">
+        
+        <!-- Summary block -->
+        <div class="bg-white p-6 border border-brand-gold/15 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-burgundy border-b border-brand-gold/10 pb-3 mb-4">Price Details</h3>
+          <div class="space-y-3.5 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Item Total</span>
+              <span id="summary-subtotal" class="font-semibold">₹ 0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Delivery</span>
+              <span id="summary-shipping" class="font-semibold text-green-700">FREE</span>
+            </div>
+            
+            <!-- Discount row (only if automatically applicable) -->
+            <div id="summary-discount-row" class="flex justify-between text-green-700 font-semibold hidden">
+              <span>Discount</span>
+              <span id="summary-discount">- ₹ 0</span>
+            </div>
+
+            <hr class="border-brand-gold/15 my-4">
+
+            <div class="flex justify-between text-base font-bold text-brand-burgundy pt-1">
+              <span>Total</span>
+              <span id="summary-total">₹ 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkout Details Form -->
+        <div class="bg-white p-6 border border-brand-gold/15 shadow-sm">
+          <h3 class="font-serif text-lg font-bold text-brand-burgundy border-b border-brand-gold/10 pb-3 mb-4">Delivery details</h3>
+          <form id="checkout-form" onsubmit="handlePlaceOrder(event)" class="space-y-4 text-xs">
+            
+            <!-- Customer Name -->
+            <div>
+              <label for="ship-first" class="block font-semibold mb-1">Name *</label>
+              <input type="text" id="ship-first" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy" placeholder="Enter your name">
+            </div>
+
+            <!-- Email & Mobile Number -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="ship-email" class="block font-semibold mb-1">Email Address *</label>
+                <input type="email" id="ship-email" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy">
+              </div>
+              <div>
+                <label for="ship-phone" class="block font-semibold mb-1">Mobile Number *</label>
+                <input type="tel" id="ship-phone" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy" placeholder="10-digit number">
+              </div>
+            </div>
+
+            <!-- Street Address -->
+            <div>
+              <label for="ship-address" class="block font-semibold mb-1">Street Address *</label>
+              <textarea id="ship-address" required rows="2" class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy" placeholder="House no., street name, area"></textarea>
+            </div>
+
+            <!-- City, State & PIN Code -->
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label for="ship-city" class="block font-semibold mb-1">City *</label>
+                <input type="text" id="ship-city" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy">
+              </div>
+              <div>
+                <label for="ship-state" class="block font-semibold mb-1">State *</label>
+                <input type="text" id="ship-state" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy">
+              </div>
+              <div>
+                <label for="ship-pin" class="block font-semibold mb-1">PIN Code *</label>
+                <input type="text" id="ship-pin" required class="w-full bg-brand-cream/20 p-2.5 border border-brand-gold/20 focus:outline-none focus:border-brand-burgundy" placeholder="6-digit PIN">
+              </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="pt-4 border-t border-brand-gold/10">
+              <label class="block font-bold text-brand-burgundy uppercase mb-2">Payment Method</label>
+              <div class="space-y-2">
+                <label class="flex items-center p-2.5 border border-brand-gold/10 bg-brand-cream/10 cursor-pointer">
+                  <input type="radio" name="payment" value="cod" checked class="custom-checkbox h-4 w-4 mr-2.5">
+                  <span>Cash on Delivery (COD)</span>
+                </label>
+                <label class="flex items-center p-2.5 border border-brand-gold/10 bg-brand-cream/10 cursor-pointer">
+                  <input type="radio" name="payment" value="card" class="custom-checkbox h-4 w-4 mr-2.5">
+                  <span>UPI / Credit Card / Debit Card (Simulated)</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-brand-burgundy hover:bg-brand-burgundyLight text-white text-sm uppercase tracking-widest font-bold py-3.5 transition duration-300 border-b-2 border-brand-gold mt-4">
+              Place Order
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Global Dynamic Footer -->
+  <div id="global-footer"></div>
+
+  <!-- Order Success Modal Overlay -->
+  <div id="success-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-brand-charcoal/60 transition-opacity duration-300"></div>
+
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div class="inline-block align-middle bg-white p-8 max-w-md w-full shadow-2xl border border-brand-gold/20 text-center space-y-6 transform transition-all">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 text-green-600">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div class="space-y-2">
+          <h3 class="font-serif text-2xl font-bold text-brand-burgundy">Order Placed Successfully!</h3>
+          <p class="text-xs text-gray-500">Thank you for shopping at Raga Boutique. Your order has been placed and is currently being processed.</p>
+        </div>
+        
+        <!-- Order info summary details -->
+        <div class="bg-brand-cream/40 p-4 border border-brand-gold/15 text-left text-xs space-y-2">
+          <div class="flex justify-between">
+            <span class="text-gray-500">Order Reference:</span>
+            <span id="order-ref" class="font-bold text-brand-burgundy uppercase">#RAGA-18239023</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Delivery To:</span>
+            <span id="order-name" class="font-semibold text-brand-charcoal">Preeti Sharma</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Paid Via:</span>
+            <span id="order-pay" class="font-semibold text-brand-charcoal uppercase">COD</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Total Amount:</span>
+            <span id="order-amount" class="font-bold text-brand-burgundy">₹ 0</span>
+          </div>
+        </div>
+
+        <button onclick="closeSuccessModal()" class="w-full bg-brand-burgundy hover:bg-brand-burgundyLight text-white text-xs uppercase tracking-widest font-bold py-3 transition duration-300 border-b-2 border-brand-gold">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript Modules -->
+  <script src="js/products.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Checkout implementation scripts -->
+  <script>
+    let checkoutSubtotal = 0;
+    let couponDiscountRate = 0;
+    let discountAppliedVal = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCartPage();
+    });
+
+    // Render cart items listing and totals
+    function renderCartPage() {
+      const itemsList = document.getElementById("cart-page-items-list");
+      const emptyState = document.getElementById("cart-empty-state");
+      const layout = document.getElementById("cart-main-layout");
+      
+      if (!itemsList || !emptyState || !layout || typeof ProductsDB === "undefined") return;
+
+      const cartItems = typeof cart !== "undefined" ? cart : [];
+
+      if (cartItems.length === 0) {
+        layout.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+      layout.classList.remove("hidden");
+
+      checkoutSubtotal = 0;
+      let totalItemsCount = 0;
+
+      const itemsCard = document.getElementById("cart-items-card");
+
+      if (cartItems.length === 1) {
+        if (itemsCard) {
+          itemsCard.className = "w-full lg:flex-1 bg-white p-6 sm:p-8 border border-brand-gold/20 shadow-md rounded-xl flex flex-col justify-between min-h-[460px] lg:min-h-[500px] transition-all duration-300";
+        }
+        itemsList.className = "flex-1 flex flex-col justify-center py-4";
+
+        const item = cartItems[0];
+        const product = ProductsDB.getById(item.id);
+
+        if (product) {
+          const sub = product.price * item.quantity;
+          checkoutSubtotal = sub;
+          totalItemsCount = item.quantity;
+
+          itemsList.innerHTML = `
+            <div class="flex flex-col sm:flex-row items-center sm:items-stretch gap-6 py-6 my-auto flex-1 group">
+              <!-- Clean, Properly Sized Image (~128px wide x 160px high) -->
+              <div class="w-32 h-40 sm:w-36 sm:h-44 flex-shrink-0 overflow-hidden rounded-xl border border-brand-gold/20 shadow-xs bg-brand-cream/20 relative">
+                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+
+              <!-- Product Information Block with Balanced Whitespace Distribution -->
+              <div class="flex-1 w-full min-w-0 flex flex-col justify-between space-y-6 py-1">
+                <!-- Top Row: Product Name (Left) & Price (Right) -->
+                <div class="flex items-start justify-between gap-4">
+                  <h4 class="font-serif text-sm font-semibold text-brand-burgundy hover:text-brand-gold transition-colors leading-snug line-clamp-2">
+                    <a href="${product.category === 'sarees' ? 'sarees.html' : 'kurtas.html'}">${product.name}</a>
+                  </h4>
+                  <div class="text-right flex-shrink-0">
+                    <p class="font-serif text-sm font-bold text-brand-burgundy">₹ ${sub.toLocaleString("en-IN")}</p>
+                    ${item.quantity > 1 ? `<p class="text-[10px] text-gray-400 font-medium">₹ ${product.price.toLocaleString("en-IN")} each</p>` : ''}
+                  </div>
+                </div>
+
+                <!-- Bottom Row: Quantity Controls & Remove Button on SAME ROW -->
+                <div class="flex items-center justify-between pt-4 border-t border-brand-gold/15 mt-auto">
+                  <!-- Quantity Controls -->
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-gray-600">Quantity:</span>
+                    <div class="flex items-center border border-brand-gold/30 rounded bg-white shadow-2xs overflow-hidden">
+                      <button onclick="updateCartQuantityPage('${product.id}', ${item.quantity - 1})" 
+                        class="px-2.5 py-1 text-xs font-bold text-brand-charcoal hover:bg-brand-burgundy hover:text-white transition-colors duration-150" title="Decrease quantity">-</button>
+                      <span class="px-3 py-1 font-bold text-xs text-brand-burgundy bg-brand-cream/30 min-w-[28px] text-center border-x border-brand-gold/20">${item.quantity}</span>
+                      <button onclick="updateCartQuantityPage('${product.id}', ${item.quantity + 1})" 
+                        class="px-2.5 py-1 text-xs font-bold text-brand-charcoal hover:bg-brand-burgundy hover:text-white transition-colors duration-150" title="Increase quantity">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Remove Button -->
+                  <button type="button" onclick="removeFromCartPage('${product.id}')" 
+                    class="text-xs font-semibold text-rose-700 hover:text-rose-900 transition-colors duration-150 flex items-center gap-1">
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        if (itemsCard) {
+          itemsCard.className = "w-full lg:flex-1 bg-white p-6 sm:p-8 border border-brand-gold/20 shadow-md rounded-xl space-y-6 transition-all duration-300";
+        }
+
+        // Scrollable container if 3+ items
+        if (cartItems.length >= 3) {
+          itemsList.className = "max-h-[580px] overflow-y-auto pr-1.5 cart-custom-scrollbar divide-y divide-brand-gold/15";
+        } else {
+          itemsList.className = "divide-y divide-brand-gold/15";
+        }
+
+        let html = "";
+        cartItems.forEach(item => {
+          const product = ProductsDB.getById(item.id);
+          if (!product) return;
+
+          const sub = product.price * item.quantity;
+          checkoutSubtotal += sub;
+          totalItemsCount += item.quantity;
+
+          html += `
+            <div class="flex items-center gap-4 py-4 first:pt-0 last:pb-0 group">
+              <!-- Compact Product Image (~96px wide x 120px high) -->
+              <div class="w-24 h-28 flex-shrink-0 overflow-hidden rounded-lg border border-brand-gold/20 shadow-xs bg-brand-cream/20 relative">
+                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+
+              <!-- Product Information Block -->
+              <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch space-y-2 py-0.5">
+                <!-- Top Row: Product Name (Left) & Price (Right) -->
+                <div class="flex items-start justify-between gap-3">
+                  <h4 class="font-serif text-sm font-semibold text-brand-burgundy hover:text-brand-gold transition-colors leading-snug line-clamp-2">
+                    <a href="${product.category === 'sarees' ? 'sarees.html' : 'kurtas.html'}">${product.name}</a>
+                  </h4>
+                  <div class="text-right flex-shrink-0">
+                    <p class="font-serif text-sm font-bold text-brand-burgundy">₹ ${sub.toLocaleString("en-IN")}</p>
+                    ${item.quantity > 1 ? `<p class="text-[10px] text-gray-400 font-medium">₹ ${product.price.toLocaleString("en-IN")} each</p>` : ''}
+                  </div>
+                </div>
+
+                <!-- Bottom Row: Quantity Controls (Left) & Remove Button (Right) on SAME ROW -->
+                <div class="flex items-center justify-between pt-1 mt-auto">
+                  <!-- Quantity Controls -->
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-gray-600">Quantity:</span>
+                    <div class="flex items-center border border-brand-gold/30 rounded bg-white shadow-2xs overflow-hidden">
+                      <button onclick="updateCartQuantityPage('${product.id}', ${item.quantity - 1})" 
+                        class="px-2 py-0.5 text-xs font-bold text-brand-charcoal hover:bg-brand-burgundy hover:text-white transition-colors duration-150" title="Decrease quantity">-</button>
+                      <span class="px-2.5 py-0.5 font-bold text-xs text-brand-burgundy bg-brand-cream/30 min-w-[24px] text-center border-x border-brand-gold/20">${item.quantity}</span>
+                      <button onclick="updateCartQuantityPage('${product.id}', ${item.quantity + 1})" 
+                        class="px-2 py-0.5 text-xs font-bold text-brand-charcoal hover:bg-brand-burgundy hover:text-white transition-colors duration-150" title="Increase quantity">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Remove Button -->
+                  <button type="button" onclick="removeFromCartPage('${product.id}')" 
+                    class="text-xs font-semibold text-rose-700 hover:text-rose-900 transition-colors duration-150 flex items-center gap-1">
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        itemsList.innerHTML = html;
+      }
+
+      const countBadge = document.getElementById("bag-count-badge");
+      if (countBadge) countBadge.textContent = `${totalItemsCount} Item${totalItemsCount === 1 ? '' : 's'}`;
+      calculateCheckoutTotals();
+    }
+
+    // Calculations logic
+    function calculateCheckoutTotals() {
+      const subtotalField = document.getElementById("summary-subtotal");
+      const shippingField = document.getElementById("summary-shipping");
+      const discountRow = document.getElementById("summary-discount-row");
+      const discountField = document.getElementById("summary-discount");
+      const totalField = document.getElementById("summary-total");
+
+      // Calculate shipping
+      const shippingFee = checkoutSubtotal >= 1999 ? 0 : 150;
+      
+      // Calculate discount
+      discountAppliedVal = checkoutSubtotal * couponDiscountRate;
+      
+      const grandTotal = checkoutSubtotal + shippingFee - discountAppliedVal;
+
+      if (subtotalField) subtotalField.textContent = `₹ ${checkoutSubtotal.toLocaleString("en-IN")}`;
+      
+      if (shippingField) {
+        shippingField.textContent = shippingFee === 0 ? "FREE" : `₹ ${shippingFee}`;
+        shippingField.className = shippingFee === 0 ? "font-semibold text-green-700" : "font-semibold text-brand-charcoal";
+      }
+
+      if (discountAppliedVal > 0) {
+        discountRow.classList.remove("hidden");
+        discountField.textContent = `- ₹ ${discountAppliedVal.toLocaleString("en-IN")}`;
+      } else {
+        discountRow.classList.add("hidden");
+      }
+
+      if (totalField) totalField.textContent = `₹ ${grandTotal.toLocaleString("en-IN")}`;
+    }
+
+    // Intermediary logic wrapping cart updates
+    function updateCartQuantityPage(id, qty) {
+      if (typeof updateCartQuantity === "function") {
+        updateCartQuantity(id, qty);
+        renderCartPage();
+      }
+    }
+
+    function removeFromCartPage(id) {
+      if (typeof removeFromCart === "function") {
+        removeFromCart(id);
+        renderCartPage();
+      }
+    }
+
+
+
+    // Place Order handler
+    function handlePlaceOrder(event) {
+      event.preventDefault();
+      
+      // Extract form values
+      const firstName = document.getElementById("ship-first").value.trim();
+      const email = document.getElementById("ship-email") ? document.getElementById("ship-email").value.trim() : '';
+      const phone = document.getElementById("ship-phone") ? document.getElementById("ship-phone").value.trim() : '';
+      const address = document.getElementById("ship-address") ? document.getElementById("ship-address").value.trim() : '';
+      const city = document.getElementById("ship-city") ? document.getElementById("ship-city").value.trim() : '';
+      const state = document.getElementById("ship-state") ? document.getElementById("ship-state").value.trim() : '';
+      const pin = document.getElementById("ship-pin") ? document.getElementById("ship-pin").value.trim() : '';
+      const payMethod = document.querySelector('input[name="payment"]:checked') ? document.querySelector('input[name="payment"]:checked').value : 'cod';
+      
+      // Calculate final total
+      const shippingFee = checkoutSubtotal >= 1999 ? 0 : 150;
+      const finalAmount = checkoutSubtotal + shippingFee - discountAppliedVal;
+      const orderNum = Math.floor(10000 + Math.random() * 90000);
+      const orderRef = `#RAGA-${orderNum}`;
+
+      // Save real customer order to localStorage for Admin panel
+      if (typeof cart !== "undefined" && cart.length > 0) {
+        const fullAddress = [address, city, state, pin].filter(Boolean).join(', ');
+        const realOrder = {
+          id: `RAGA-${orderNum}`,
+          date: new Date().toISOString().slice(0,10) + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+          customer: { name: firstName || 'Guest Customer', phone: phone || '—', email: email || '', address: fullAddress || 'Store Address' },
+          items: cart.map(item => ({ name: item.name, price: item.price, qty: item.quantity || 1, photo: item.image || item.photo || '' })),
+          totalAmount: finalAmount,
+          paymentMethod: payMethod === "cod" ? "COD" : "Prepaid",
+          paymentStatus: payMethod === "cod" ? "Pending COD" : "Paid",
+          status: "pending",
+          trackingId: "",
+          notes: "Online order from storefront"
+        };
+
+        try {
+          const storedOrders = JSON.parse(localStorage.getItem('raga_admin_orders_v2') || '[]');
+          storedOrders.unshift(realOrder);
+          localStorage.setItem('raga_admin_orders_v2', JSON.stringify(storedOrders));
+        } catch(e){}
+      }
+
+      // Populate success modal info
+      document.getElementById("order-ref").textContent = orderRef;
+      document.getElementById("order-name").textContent = firstName || 'Valued Customer';
+      document.getElementById("order-pay").textContent = payMethod === "cod" ? "Cash on Delivery (COD)" : "Prepaid Online Card/UPI";
+      document.getElementById("order-amount").textContent = `₹ ${finalAmount.toLocaleString("en-IN")}`;
+
+      // Open Success modal
+      const modal = document.getElementById("success-modal");
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    // Close success checkout, reset cart
+    function closeSuccessModal() {
+      // Clear cart array in JS memory and localStorage
+      if (typeof cart !== "undefined") {
+        cart = [];
+        localStorage.setItem("raga_cart", JSON.stringify(cart));
+      }
+      
+      // Update badging UI
+      if (typeof updateCartBadge === "function") {
+        updateCartBadge();
+      }
+
+      // Redirect to home
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
