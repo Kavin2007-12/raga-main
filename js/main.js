@@ -328,8 +328,10 @@ function openQuickView(productId) {
         <!-- Price Block -->
         <div class="flex items-baseline space-x-3 mb-6 bg-brand-cream/40 p-3 border-l-2 border-brand-gold">
           <span class="text-xl font-bold text-brand-burgundy">₹ ${product.price.toLocaleString("en-IN")}</span>
-          ${(product.strikeOffer === true || (product.strikeOffer === undefined && product.originalPrice > product.price)) && product.originalPrice > product.price ? `
-            <span class="text-sm text-gray-400 line-through">₹ ${product.originalPrice.toLocaleString("en-IN")}</span>
+          ${(product.strikeAmount || (product.originalPrice && product.originalPrice > product.price)) ? `
+            <span class="text-sm text-gray-400 line-through">₹ ${(product.strikeAmount || product.originalPrice).toLocaleString("en-IN")}</span>
+          ` : ""}
+          ${product.discount > 0 ? `
             <span class="text-xs font-bold text-green-700">(${product.discount}% OFF)</span>
           ` : ""}
         </div>
@@ -478,8 +480,10 @@ function openShopTheLook(productId, videoSrc) {
         <!-- Price Block -->
         <div class="flex items-baseline space-x-3 mb-6 bg-brand-cream/60 p-3 border-l-2 border-brand-gold">
           <span class="text-xl font-bold text-brand-burgundy">₹ ${product.price.toLocaleString("en-IN")}</span>
-          ${(product.strikeOffer === true || (product.strikeOffer === undefined && product.originalPrice > product.price)) && product.originalPrice > product.price ? `
-            <span class="text-sm text-gray-400 line-through">₹ ${product.originalPrice.toLocaleString("en-IN")}</span>
+          ${(product.strikeAmount || (product.originalPrice && product.originalPrice > product.price)) ? `
+            <span class="text-sm text-gray-400 line-through">₹ ${(product.strikeAmount || product.originalPrice).toLocaleString("en-IN")}</span>
+          ` : ""}
+          ${product.discount > 0 ? `
             <span class="text-xs font-bold text-green-700">(${product.discount}% OFF)</span>
           ` : ""}
         </div>
