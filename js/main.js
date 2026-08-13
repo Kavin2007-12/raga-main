@@ -804,24 +804,51 @@ const INFO_DATA = {
       </div>
     `
   },
-  store: {
-    title: "Our Retail Stores",
+  contact: {
+    title: "Contact Us",
     content: `
-      <p class="mb-4">Experience the rich textures of our handlooms in person at our flagship experience centers.</p>
-      <h4 class="font-bold text-brand-burgundy mb-2 uppercase text-xs tracking-wider">Locations:</h4>
-      <div class="space-y-3 text-xs">
-        <div>
-          <h5 class="font-bold text-brand-charcoal">1. Bengaluru Flagship</h5>
-          <p class="text-gray-500">12, 100 Feet Rd, 4th Block, Jayanagar, Bengaluru - 560011</p>
+      <p class="mb-4">We are here to assist you with your orders, custom handloom styling, and boutique queries.</p>
+      
+      <div class="space-y-4 text-xs">
+        <div class="bg-brand-cream/40 p-4 border border-brand-gold/25 rounded-md">
+          <h4 class="font-bold text-brand-burgundy uppercase text-xs tracking-wider mb-2">📍 From / Store Address</h4>
+          <p class="text-brand-charcoal font-semibold leading-relaxed">
+            No. 21, 22 & 23, Municipality Building,<br>
+            Santhaipettai Bus Stop,<br>
+            Erode Main Road,<br>
+            Tiruchengode – 637 211.
+          </p>
         </div>
-        <div>
-          <h5 class="font-bold text-brand-charcoal">2. Chennai Flagship</h5>
-          <p class="text-gray-500">88, Usman Road, T. Nagar, Chennai - 600017</p>
+
+        <div class="bg-white p-4 border border-brand-gold/15 rounded-md space-y-2.5">
+          <div>
+            <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">📞 Phone Number</h5>
+            <p class="text-brand-charcoal font-semibold"><a href="tel:+918754291999" class="hover:text-brand-burgundy transition">+91 87542 91999</a></p>
+          </div>
+          <div>
+            <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">✉️ Email Address</h5>
+            <p class="text-brand-charcoal font-semibold"><a href="mailto:customercare@ragaboutique.co.in" class="hover:text-brand-burgundy transition">customercare@ragaboutique.co.in</a></p>
+          </div>
+          <div>
+            <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">⏰ Working Hours</h5>
+            <p class="text-gray-600 font-medium">Monday – Sunday: 10:00 AM – 9:00 PM IST</p>
+          </div>
         </div>
-        <div>
-          <h5 class="font-bold text-brand-charcoal">3. Hyderabad Flagship</h5>
-          <p class="text-gray-500">Banjara Hills Rd Number 2, Hyderabad - 500034</p>
-        </div>
+      </div>
+    `
+  },
+  store: {
+    title: "Our Store Location",
+    content: `
+      <p class="mb-4">Experience the rich textures of our handlooms in person at our store location.</p>
+      <div class="bg-brand-cream/40 p-4 border border-brand-gold/25 rounded-md text-xs space-y-1">
+        <h4 class="font-bold text-brand-burgundy uppercase text-xs tracking-wider mb-2">📍 Main Store Address</h4>
+        <p class="text-brand-charcoal font-semibold leading-relaxed">
+          No. 21, 22 & 23, Municipality Building,<br>
+          Santhaipettai Bus Stop,<br>
+          Erode Main Road,<br>
+          Tiruchengode – 637 211.
+        </p>
       </div>
     `
   }
