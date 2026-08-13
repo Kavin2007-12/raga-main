@@ -656,14 +656,15 @@
           <table class="admin-table w-full whitespace-nowrap">
             <thead class="sticky top-0 bg-white shadow-sm z-10">
               <tr>
-                <th class="text-left">Customer Name</th>
-                <th class="text-left">Email</th>
-                <th class="text-left">Mobile Number</th>
-                <th class="text-left">Order</th>
-                <th class="text-right">Amount</th>
-                <th class="text-center">Payment Method</th>
-                <th class="text-center">Status</th>
-                <th class="text-left">Date & Time</th>
+                <th class="text-center px-4 py-3">S.No</th>
+                <th class="text-left px-4 py-3">Customer Name</th>
+                <th class="text-left px-4 py-3">Email</th>
+                <th class="text-left px-4 py-3">Mobile Number</th>
+                <th class="text-left px-4 py-3">Order</th>
+                <th class="text-right px-4 py-3">Amount</th>
+                <th class="text-center px-4 py-3">Payment Method</th>
+                <th class="text-center px-4 py-3">Status</th>
+                <th class="text-left px-4 py-3">Date & Time</th>
               </tr>
             </thead>
             <tbody id="transactions-tbody"></tbody>
@@ -2490,16 +2491,17 @@
       return;
     }
 
-    // Excel columns: Customer Name | Email | Mobile Number | Order | Amount | Payment Method | Status | Date & Time
+    // Excel columns: S.No | Customer Name | Email | Mobile Number | Order | Amount | Payment Method | Status | Date & Time
     const data = [
-      ["Customer Name", "Email", "Mobile Number", "Order", "Amount", "Payment Method", "Status", "Date & Time"]
+      ["S.No", "Customer Name", "Email", "Mobile Number", "Order", "Amount", "Payment Method", "Status", "Date & Time"]
     ];
 
-    listToExport.forEach(t => {
+    listToExport.forEach((t, idx) => {
       let methodLabel = t.paymentMethod || 'UPI';
       if (methodLabel === 'Credit/Debit Card') methodLabel = 'Card';
 
       data.push([
+        idx + 1,
         t.customerName || 'Customer',
         t.customerEmail || '—',
         t.customerMobile || '—',
@@ -2514,6 +2516,7 @@
     const ws = XLSX.utils.aoa_to_sheet(data);
 
     ws['!cols'] = [
+      { wch: 8 },  // S.No
       { wch: 22 }, // Customer Name
       { wch: 28 }, // Email
       { wch: 18 }, // Mobile Number
@@ -2550,7 +2553,7 @@
 
     if (empty) empty.classList.add('hidden');
 
-    tbody.innerHTML = txnsList.map(t => {
+    tbody.innerHTML = txnsList.map((t, idx) => {
       let badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300';
       if (t.status === 'Paid') badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300';
       else if (t.status === 'Refunded') badgeStyle = 'bg-orange-100 text-orange-800 border-orange-300';
@@ -2561,6 +2564,7 @@
 
       return `
         <tr class="hover:bg-brand-cream/30 transition-colors border-b border-gray-100">
+          <td class="text-center font-bold text-xs text-gray-500 px-4 py-3">${idx + 1}</td>
           <td class="font-semibold text-xs text-brand-charcoal px-4 py-3">${esc(t.customerName)}</td>
           <td class="text-xs text-blue-600 underline px-4 py-3">${esc(t.customerEmail)}</td>
           <td class="text-xs text-gray-600 font-mono px-4 py-3">${esc(t.customerMobile)}</td>
