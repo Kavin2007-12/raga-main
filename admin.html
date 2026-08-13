@@ -156,6 +156,22 @@
     .admin-table tr:hover td{background:rgba(112,33,82,.02);}
     .admin-table tr:last-child td{border-bottom:none;}
 
+    /* ─ Transactions Table Thin Horizontal Scrollbar Only ─ */
+    .txn-table-scroll-container::-webkit-scrollbar:horizontal {
+      height: 6px;
+    }
+    .txn-table-scroll-container::-webkit-scrollbar-track:horizontal {
+      background: rgba(250,246,240,.6);
+      border-radius: 3px;
+    }
+    .txn-table-scroll-container::-webkit-scrollbar-thumb:horizontal {
+      background: rgba(212,178,112,.5);
+      border-radius: 3px;
+    }
+    .txn-table-scroll-container::-webkit-scrollbar-thumb:horizontal:hover {
+      background: #702152;
+    }
+
     /* ─ Views ─ */
     .view{display:none;}.view.active{display:block;}
 
@@ -652,7 +668,7 @@
 
       <!-- HTML Data Table -->
       <div class="bg-white rounded-xl border overflow-hidden" style="border-color:rgba(212,178,112,.18);box-shadow:0 2px 12px rgba(112,33,82,.06);">
-        <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto txn-table-scroll-container">
           <table class="admin-table w-full whitespace-nowrap">
             <thead class="sticky top-0 bg-white shadow-sm z-10">
               <tr>
