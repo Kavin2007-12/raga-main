@@ -546,27 +546,29 @@
         </div>
       </div>
 
-      <!-- Filter Tabs Container -->
-      <div class="bg-white rounded-xl border border-brand-gold/20 shadow-sm p-2.5 mb-6 overflow-hidden">
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" id="orders-filter-tabs">
-          <!-- Filter tabs dynamically rendered via JS -->
-        </div>
-      </div>
-
-      <!-- Search & Controls Bar + Table -->
+      <!-- Controls Bar & Order Table -->
       <div class="bg-white rounded-xl border overflow-hidden" style="border-color:rgba(212,178,112,.18);box-shadow:0 2px 12px rgba(112,33,82,.06);">
         <div class="px-5 py-3 border-b flex gap-3 items-center flex-wrap" style="border-color:rgba(212,178,112,.12);background:rgba(250,246,240,.5);">
-          <div class="relative flex-1 min-w-[220px]">
-            <input type="text" id="orders-search-input" placeholder="Search by Order ID, Customer Name, Phone, Item…" oninput="filterOrdersTable()"
-              class="w-full border rounded-lg pl-9 pr-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
-            <svg class="h-4 w-4 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <!-- Order Status Dropdown -->
+          <div class="flex items-center gap-2">
+            <label for="orders-status-filter" class="text-xs font-bold text-brand-burgundy whitespace-nowrap">Order Status:</label>
+            <select id="orders-status-filter" onchange="setOrdersFilter(this.value)" class="border rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal border-brand-gold/30">
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </div>
-          <select id="orders-payment-filter" onchange="filterOrdersTable()" class="border rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
+
+          <select id="orders-payment-filter" onchange="filterOrdersTable()" class="border rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal border-brand-gold/30">
             <option value="">All Payment Methods</option>
             <option value="Prepaid">Prepaid (Card/UPI)</option>
             <option value="COD">Cash on Delivery (COD)</option>
           </select>
-          <select id="orders-sort-select" onchange="filterOrdersTable()" class="border rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
+
+          <select id="orders-sort-select" onchange="filterOrdersTable()" class="border rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal border-brand-gold/30">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="amount-high">Amount: High to Low</option>
@@ -2022,66 +2024,46 @@
   }
 
   function renderOrdersFilterTabs() {
-    const container = document.getElementById('orders-filter-tabs');
-    if (!container) return;
-
-    const statuses = ['all', 'pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'returned'];
-    
-    container.innerHTML = statuses.map(st => {
-      const cfg = ORDER_STATUS_CONFIG[st];
-      const count = st === 'all' ? adminOrders.length : adminOrders.filter(o => o.status === st).length;
-      const isActive = currentOrderFilter === st;
-
-      const activeClasses = isActive 
-        ? 'bg-brand-burgundy text-white font-bold shadow-sm' 
-        : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200';
-
-      return `
-        <button onclick="setOrdersFilter('${st}')" 
-          class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${activeClasses}">
-          <span>${cfg.icon}</span>
-          <span>${cfg.label}</span>
-          <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}">${count}</span>
-        </button>
-      `;
-    }).join('');
+    const dropdown = document.getElementById('orders-status-filter');
+    if (dropdown) {
+      dropdown.value = currentOrderFilter || 'all';
+    }
   }
 
   function setOrdersFilter(st) {
-    currentOrderFilter = st;
-    renderOrdersFilterTabs();
+    currentOrderFilter = st || 'all';
     filterOrdersTable();
   }
 
   function filterOrdersTable() {
-    const q = (document.getElementById('orders-search-input')?.value || '').toLowerCase().trim();
+    const statusVal = document.getElementById('orders-status-filter')?.value || currentOrderFilter || 'all';
+    currentOrderFilter = statusVal;
+
     const payFilter = document.getElementById('orders-payment-filter')?.value || '';
     const sortVal = document.getElementById('orders-sort-select')?.value || 'newest';
 
     let list = adminOrders;
 
     if (currentOrderFilter !== 'all') {
-      list = list.filter(o => o.status === currentOrderFilter);
+      if (currentOrderFilter === 'confirmed') {
+        list = list.filter(o => o.status === 'confirmed' || o.status === 'packed' || o.status === 'processing');
+      } else {
+        list = list.filter(o => o.status === currentOrderFilter);
+      }
     }
 
     if (payFilter) {
-      list = list.filter(o => o.paymentMethod === payFilter);
-    }
-
-    if (q) {
-      list = list.filter(o => {
-        const idMatch = o.id.toLowerCase().includes(q);
-        const nameMatch = (o.customer.name || '').toLowerCase().includes(q);
-        const phoneMatch = (o.customer.phone || '').toLowerCase().includes(q);
-        const itemMatch = (o.items || []).some(i => i.name.toLowerCase().includes(q));
-        return idMatch || nameMatch || phoneMatch || itemMatch;
-      });
+      if (payFilter === 'COD') {
+        list = list.filter(o => o.paymentMethod === 'COD' || o.paymentMethod === 'Cash on Delivery');
+      } else {
+        list = list.filter(o => o.paymentMethod === 'Prepaid' || o.paymentMethod === 'UPI' || o.paymentMethod === 'Credit/Debit Card' || o.paymentMethod === 'Net Banking');
+      }
     }
 
     if (sortVal === 'newest') list.sort((a, b) => new Date(b.date) - new Date(a.date));
     else if (sortVal === 'oldest') list.sort((a, b) => new Date(a.date) - new Date(b.date));
-    else if (sortVal === 'amount-high') list.sort((a, b) => b.totalAmount - a.totalAmount);
-    else if (sortVal === 'amount-low') list.sort((a, b) => a.totalAmount - b.totalAmount);
+    else if (sortVal === 'amount-high') list.sort((a, b) => (Number(b.totalAmount)||0) - (Number(a.totalAmount)||0));
+    else if (sortVal === 'amount-low') list.sort((a, b) => (Number(a.totalAmount)||0) - (Number(b.totalAmount)||0));
 
     renderOrdersTable(list);
   }
