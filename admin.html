@@ -595,18 +595,18 @@
           </table>
         </div>
         <div id="orders-empty" class="hidden text-center py-12 text-gray-400 text-sm">
-          No orders found matching the selected filter or search query.
+          No orders found matching the selected filter query.
         </div>
       </div>
     </div>
 
-    <!-- ═══ TRANSACTIONS VIEW (Google Pay Style) ═══ -->
+    <!-- ═══ TRANSACTIONS VIEW (Data Table) ═══ -->
     <div id="view-transactions" class="view fade-in">
-      <!-- Header -->
+      <!-- Header & Export Excel -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
         <div>
           <h2 class="font-serif text-xl font-bold text-brand-burgundy">Transactions History</h2>
-          <p class="text-xs text-gray-500 mt-0.5">Simple, clean record of payment transactions and Cash on Delivery orders.</p>
+          <p class="text-xs text-gray-500 mt-0.5">Manage and review customer payment transactions and order records.</p>
         </div>
         <button onclick="exportTransactionsExcel()" class="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-sm transition-all border border-emerald-800/20 shrink-0">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -616,29 +616,32 @@
         </button>
       </div>
 
-      <!-- Controls & Search Bar -->
+      <!-- Filters & Controls Bar -->
       <div class="bg-white rounded-xl border border-brand-gold/20 p-3.5 shadow-sm mb-5">
         <div class="flex items-center gap-3 flex-wrap">
-          <div class="relative flex-1 min-w-[220px]">
-            <input type="text" id="txn-search-input" placeholder="Search product or customer name..." oninput="filterTransactionsTable()"
-              class="w-full border rounded-lg pl-9 pr-3 py-1.5 text-xs focus:outline-none bg-brand-cream/20 border-brand-gold/25 focus:border-brand-burgundy">
-            <svg class="h-4 w-4 text-gray-400 absolute left-3 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <div class="flex items-center gap-2">
+            <label for="txn-status-filter" class="text-xs font-bold text-brand-burgundy whitespace-nowrap">Payment Status:</label>
+            <select id="txn-status-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal">
+              <option value="">All</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Failed">Failed</option>
+              <option value="Refunded">Refunded</option>
+            </select>
           </div>
-          <select id="txn-status-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
-            <option value="">All Statuses</option>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-            <option value="Cancelled">Cancelled / Failed</option>
-            <option value="Refunded">Refunded</option>
-          </select>
-          <select id="txn-method-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
-            <option value="">All Payment Methods</option>
-            <option value="UPI">UPI</option>
-            <option value="Credit/Debit Card">Credit/Debit Card</option>
-            <option value="Net Banking">Net Banking</option>
-            <option value="Cash on Delivery">Cash on Delivery</option>
-          </select>
-          <select id="txn-sort-select" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
+
+          <div class="flex items-center gap-2">
+            <label for="txn-method-filter" class="text-xs font-bold text-brand-burgundy whitespace-nowrap">Payment Method:</label>
+            <select id="txn-method-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal">
+              <option value="">All</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
+              <option value="Net Banking">Net Banking</option>
+              <option value="Cash on Delivery">Cash on Delivery</option>
+            </select>
+          </div>
+
+          <select id="txn-sort-select" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none bg-white text-brand-charcoal ml-auto">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="amount-high">Amount: High to Low</option>
@@ -647,12 +650,28 @@
         </div>
       </div>
 
-      <!-- Google Pay Style Transaction Cards List -->
-      <div id="transactions-list-container" class="space-y-3"></div>
-
-      <!-- Empty State -->
-      <div id="transactions-empty" class="hidden bg-white rounded-xl border border-brand-gold/20 p-10 text-center text-gray-400 text-sm shadow-sm">
-        No transaction records found matching your search.
+      <!-- HTML Data Table -->
+      <div class="bg-white rounded-xl border overflow-hidden" style="border-color:rgba(212,178,112,.18);box-shadow:0 2px 12px rgba(112,33,82,.06);">
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+          <table class="admin-table w-full whitespace-nowrap">
+            <thead class="sticky top-0 bg-white shadow-sm z-10">
+              <tr>
+                <th class="text-left">Customer Name</th>
+                <th class="text-left">Email</th>
+                <th class="text-left">Mobile Number</th>
+                <th class="text-left">Order</th>
+                <th class="text-right">Amount</th>
+                <th class="text-center">Payment Method</th>
+                <th class="text-center">Status</th>
+                <th class="text-left">Date & Time</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-tbody"></tbody>
+          </table>
+        </div>
+        <div id="transactions-empty" class="hidden text-center py-10 text-gray-400 text-sm">
+          No transaction records found matching your selected filters.
+        </div>
       </div>
     </div>
 
@@ -1940,7 +1959,7 @@
       paymentStatus: 'Paid',
       status: 'delivered',
       date: '12 Aug 2026, 10:42 AM',
-      customer: { name: 'Kavya', email: 'kavya@example.com', phone: '9876543210' },
+      customer: { name: 'Kavya', email: 'kavya@gmail.com', phone: '9876543210' },
       items: [{ title: 'Classic Ivory Saree', price: 1999, quantity: 1 }]
     },
     {
@@ -1950,42 +1969,42 @@
       paymentMethod: 'Cash on Delivery',
       paymentStatus: 'Pending',
       status: 'pending',
-      date: '12 Aug 2026, 11:20 AM',
-      customer: { name: 'Priya', email: 'priya@example.com', phone: '9876543211' },
+      date: '12 Aug 2026, 09:20 AM',
+      customer: { name: 'Priya', email: 'priya@gmail.com', phone: '9876432109' },
       items: [{ title: 'Floral Maxi Dress', price: 2499, quantity: 1 }]
     },
     {
       id: 'RAGA-1003',
-      title: 'Royal Crimson Banarasi Silk Saree',
-      totalAmount: 8499,
-      paymentMethod: 'Credit/Debit Card',
+      title: 'Cotton Kurti',
+      totalAmount: 1299,
+      paymentMethod: 'Card',
       paymentStatus: 'Paid',
-      status: 'shipped',
-      date: '11 Aug 2026, 04:15 PM',
-      customer: { name: 'Ananya Sharma', email: 'ananya@example.com', phone: '9876543212' },
-      items: [{ title: 'Royal Crimson Banarasi Silk Saree', price: 8499, quantity: 1 }]
+      status: 'delivered',
+      date: '11 Aug 2026, 06:15 PM',
+      customer: { name: 'Divya', email: 'divya@gmail.com', phone: '9876321098' },
+      items: [{ title: 'Cotton Kurti', price: 1299, quantity: 1 }]
     },
     {
       id: 'RAGA-1004',
+      title: 'Royal Crimson Banarasi Silk Saree',
+      totalAmount: 8499,
+      paymentMethod: 'Card',
+      paymentStatus: 'Paid',
+      status: 'shipped',
+      date: '11 Aug 2026, 04:15 PM',
+      customer: { name: 'Ananya Sharma', email: 'ananya@gmail.com', phone: '9876210987' },
+      items: [{ title: 'Royal Crimson Banarasi Silk Saree', price: 8499, quantity: 1 }]
+    },
+    {
+      id: 'RAGA-1005',
       title: 'Emerald Kanjivaram Silk Saree',
       totalAmount: 12999,
       paymentMethod: 'Cash on Delivery',
       paymentStatus: 'Paid',
       status: 'delivered',
       date: '10 Aug 2026, 02:30 PM',
-      customer: { name: 'Deepika Nair', email: 'deepika@example.com', phone: '9876543213' },
+      customer: { name: 'Deepika Nair', email: 'deepika@gmail.com', phone: '9876109876' },
       items: [{ title: 'Emerald Kanjivaram Silk Saree', price: 12999, quantity: 1 }]
-    },
-    {
-      id: 'RAGA-1005',
-      title: 'Pastel Pink Chanderi Kurta Set',
-      totalAmount: 3250,
-      paymentMethod: 'Net Banking',
-      paymentStatus: 'Refunded',
-      status: 'cancelled',
-      date: '09 Aug 2026, 06:10 PM',
-      customer: { name: 'Sneha Reddy', email: 'sneha@example.com', phone: '9876543214' },
-      items: [{ title: 'Pastel Pink Chanderi Kurta Set', price: 3250, quantity: 1 }]
     }
   ];
 
@@ -2449,24 +2468,14 @@
       return;
     }
 
-    // Excel columns: Customer Name | Email | Mobile Number | Order | Amount | Payment Method | Payment Status | Date & Time
+    // Excel columns: Customer Name | Email | Mobile Number | Order | Amount | Payment Method | Status | Date & Time
     const data = [
-      ["Customer Name", "Email", "Mobile Number", "Order", "Amount", "Payment Method", "Payment Status", "Date & Time"]
+      ["Customer Name", "Email", "Mobile Number", "Order", "Amount", "Payment Method", "Status", "Date & Time"]
     ];
 
     listToExport.forEach(t => {
-      let statusText = t.status;
-      if (t.paymentMethod === 'Cash on Delivery') {
-        if (t.status === 'Paid') statusText = 'Cash on Delivery • Paid';
-        else if (t.status === 'Pending') statusText = 'Cash on Delivery • Pending';
-        else if (t.status === 'Cancelled') statusText = 'Cash on Delivery • Cancelled';
-        else if (t.status === 'Refunded') statusText = 'Cash on Delivery • Returned';
-      } else {
-        if (t.status === 'Paid') statusText = `Paid • ${t.paymentMethod}`;
-        else if (t.status === 'Pending') statusText = `Pending • ${t.paymentMethod}`;
-        else if (t.status === 'Cancelled') statusText = `Cancelled • ${t.paymentMethod}`;
-        else if (t.status === 'Refunded') statusText = `Refunded • ${t.paymentMethod}`;
-      }
+      let methodLabel = t.paymentMethod || 'UPI';
+      if (methodLabel === 'Credit/Debit Card') methodLabel = 'Card';
 
       data.push([
         t.customerName || 'Customer',
@@ -2474,8 +2483,8 @@
         t.customerMobile || '—',
         t.productName || t.id || 'Order',
         Number(t.amount) || 0,
-        t.paymentMethod || 'UPI',
-        statusText,
+        methodLabel,
+        t.status || 'Pending',
         t.date || ''
       ]);
     });
@@ -2489,7 +2498,7 @@
       { wch: 32 }, // Order
       { wch: 14 }, // Amount
       { wch: 20 }, // Payment Method
-      { wch: 28 }, // Payment Status
+      { wch: 16 }, // Status
       { wch: 22 }  // Date & Time
     ];
 
@@ -2506,102 +2515,47 @@
   }
 
   function renderTransactionsTable(txnsList) {
-    const container = document.getElementById('transactions-list-container');
+    const tbody = document.getElementById('transactions-tbody');
     const empty = document.getElementById('transactions-empty');
 
-    if (!container) return;
+    if (!tbody) return;
 
     if (!txnsList || txnsList.length === 0) {
-      container.innerHTML = '';
+      tbody.innerHTML = '';
       if (empty) empty.classList.remove('hidden');
       return;
     }
 
     if (empty) empty.classList.add('hidden');
 
-    container.innerHTML = txnsList.map(t => {
-      const isCOD = t.paymentMethod === 'Cash on Delivery';
-      const isPaid = t.status === 'Paid';
-      const isPending = t.status === 'Pending';
-      const isCancelled = t.status === 'Cancelled' || t.status === 'Failed';
-      const isRefunded = t.status === 'Refunded';
+    tbody.innerHTML = txnsList.map(t => {
+      let badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300';
+      if (t.status === 'Paid') badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+      else if (t.status === 'Refunded') badgeStyle = 'bg-orange-100 text-orange-800 border-orange-300';
+      else if (t.status === 'Cancelled' || t.status === 'Failed') badgeStyle = 'bg-rose-100 text-rose-800 border-rose-300';
 
-      let amountText = '₹' + Number(t.amount).toLocaleString('en-IN');
-      let amountColorClass = 'text-brand-charcoal';
-
-      if (isPaid && !isCOD) {
-        amountText = '+ ₹' + Number(t.amount).toLocaleString('en-IN');
-        amountColorClass = 'text-emerald-700';
-      } else if (isPaid && isCOD) {
-        amountText = '₹' + Number(t.amount).toLocaleString('en-IN');
-        amountColorClass = 'text-emerald-700';
-      } else if (isCancelled) {
-        amountColorClass = 'text-rose-600 line-through opacity-70';
-      }
-
-      let statusText = '';
-      let badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
-
-      if (isCOD) {
-        if (isPaid) {
-          statusText = 'Cash on Delivery • Paid';
-          badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
-        } else if (isPending) {
-          statusText = 'Cash on Delivery • Pending';
-          badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
-        } else if (isCancelled) {
-          statusText = 'Cash on Delivery • Cancelled';
-          badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/60';
-        } else if (isRefunded) {
-          statusText = 'Cash on Delivery • Returned';
-          badgeClass = 'bg-orange-50 text-orange-700 border-orange-200/60';
-        } else {
-          statusText = `Cash on Delivery • ${t.status}`;
-        }
-      } else {
-        if (isPaid) {
-          statusText = `Paid • ${t.paymentMethod}`;
-          badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
-        } else if (isPending) {
-          statusText = `Pending • ${t.paymentMethod}`;
-          badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
-        } else if (isCancelled) {
-          statusText = `Cancelled • ${t.paymentMethod}`;
-          badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/60';
-        } else if (isRefunded) {
-          statusText = `Refunded • ${t.paymentMethod}`;
-          badgeClass = 'bg-orange-50 text-orange-700 border-orange-200/60';
-        } else {
-          statusText = `${t.status} • ${t.paymentMethod}`;
-        }
-      }
+      let methodLabel = t.paymentMethod || 'UPI';
+      if (methodLabel === 'Credit/Debit Card') methodLabel = 'Card';
 
       return `
-        <div class="bg-white p-4 rounded-xl border border-brand-gold/20 shadow-sm hover:border-brand-burgundy/30 transition-all flex items-center justify-between gap-4">
-          <!-- Left Side: Product, Customer, Date -->
-          <div class="space-y-1 text-left min-w-0 flex-1">
-            <h4 class="font-serif text-sm font-bold text-brand-burgundy truncate">${esc(t.productName)}</h4>
-            <p class="text-xs font-semibold text-brand-charcoal">${esc(t.customerName)}</p>
-            <p class="text-[11px] text-gray-400 font-medium flex items-center gap-1">
-              <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              ${esc(t.date)}
-            </p>
-          </div>
-
-          <!-- Right Side: Amount, Payment Status & Method -->
-          <div class="text-right shrink-0 space-y-1">
-            <div class="font-bold text-base ${amountColorClass}">
-              ${amountText}
-            </div>
-            <div>
-              <span class="inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeClass}">
-                ${esc(statusText)}
-              </span>
-            </div>
-          </div>
-        </div>
+        <tr class="hover:bg-brand-cream/30 transition-colors border-b border-gray-100">
+          <td class="font-semibold text-xs text-brand-charcoal px-4 py-3">${esc(t.customerName)}</td>
+          <td class="text-xs text-blue-600 underline px-4 py-3">${esc(t.customerEmail)}</td>
+          <td class="text-xs text-gray-600 font-mono px-4 py-3">${esc(t.customerMobile)}</td>
+          <td class="font-serif font-medium text-xs text-brand-burgundy px-4 py-3">${esc(t.productName)}</td>
+          <td class="font-bold text-xs text-right text-brand-charcoal px-4 py-3">₹${Number(t.amount).toLocaleString('en-IN')}</td>
+          <td class="text-center px-4 py-3">
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${t.paymentMethod==='Cash on Delivery' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+              ${esc(methodLabel)}
+            </span>
+          </td>
+          <td class="text-center px-4 py-3">
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeStyle}">
+              ${esc(t.status)}
+            </span>
+          </td>
+          <td class="text-xs text-gray-500 px-4 py-3">${esc(t.date)}</td>
+        </tr>
       `;
     }).join('');
   }
