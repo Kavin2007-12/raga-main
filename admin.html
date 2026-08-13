@@ -427,7 +427,13 @@
                 <input type="number" id="page-product-price" class="form-input" placeholder="e.g. 8499" min="0" oninput="updateLivePreview()">
               </div>
               <div>
-                <label class="form-label">Offer / Discount (%)</label>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="form-label !mb-0">Offer / Discount (%)</label>
+                  <label class="flex items-center gap-1.5 text-xs font-semibold text-brand-burgundy cursor-pointer select-none">
+                    <input type="checkbox" id="page-product-strike-offer" class="custom-checkbox h-3.5 w-3.5 accent-brand-burgundy rounded" onchange="updateLivePreview()">
+                    <span>Strike Offer</span>
+                  </label>
+                </div>
                 <input type="number" id="page-product-offer" class="form-input" placeholder="e.g. 25" min="0" max="100" oninput="updateLivePreview()">
               </div>
             </div>
@@ -880,7 +886,13 @@
           <input type="number" id="product-price" class="form-input" placeholder="e.g. 4999" min="0">
         </div>
         <div>
-          <label class="form-label">Offer / Discount %</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="form-label !mb-0">Offer / Discount %</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold text-brand-burgundy cursor-pointer select-none">
+              <input type="checkbox" id="product-strike-offer" class="custom-checkbox h-3.5 w-3.5 accent-brand-burgundy rounded">
+              <span>Strike Offer</span>
+            </label>
+          </div>
           <input type="number" id="product-offer" class="form-input" placeholder="e.g. 30" min="0" max="100">
         </div>
       </div>
@@ -1797,16 +1809,26 @@
     const offerNum = offerVal ? Number(offerVal) : null;
     const priceNum = Number(price);
     const subcat = getSelectedSubcategoryOnAddProductPage();
+    const isStrike = document.getElementById('page-product-strike-offer')?.checked || false;
+
+    let sellingPrice = priceNum;
+    let origPrice = priceNum;
+    if (offerNum && offerNum > 0 && isStrike) {
+      sellingPrice = Math.round(priceNum * (1 - offerNum / 100));
+      origPrice = priceNum;
+    }
 
     const product = {
       id: 'p-' + uid(),
       name,
       category,
       subcategory: subcat,
-      price: priceNum,
-      originalPrice: offerNum ? Math.round(priceNum / (1 - offerNum / 100)) : priceNum,
+      price: sellingPrice,
+      originalPrice: origPrice,
+      rawPrice: priceNum,
       discount: offerNum || 0,
       offer: offerNum,
+      strikeOffer: isStrike,
       photo: pagePhotoDataUrl || '',
       image: pagePhotoDataUrl || 'images/img-saree-red.jpg',
       fabric: document.getElementById('page-product-fabric').value.trim() || 'Silk',
@@ -1838,6 +1860,8 @@
     if (customInput) { customInput.classList.add('hidden'); customInput.value = ''; }
     document.getElementById('page-product-price').value = '';
     document.getElementById('page-product-offer').value = '';
+    const elStrike = document.getElementById('page-product-strike-offer');
+    if (elStrike) elStrike.checked = false;
     document.getElementById('page-product-fabric').value = '';
     document.getElementById('page-product-weave').value = '';
     document.getElementById('page-product-desc').value = '';
@@ -1875,8 +1899,11 @@
     }
 
     document.getElementById('product-name').value = p.name || '';
-    document.getElementById('product-price').value = p.price || '';
-    document.getElementById('product-offer').value = p.offer || '';
+    document.getElementById('product-price').value = p.rawPrice || p.originalPrice || p.price || '';
+    document.getElementById('product-offer').value = p.offer || p.discount || '';
+    const elStrikeModal = document.getElementById('product-strike-offer');
+    if (elStrikeModal) elStrikeModal.checked = !!p.strikeOffer;
+
     if (p.photo) {
       document.getElementById('photo-preview-img').src = p.photo;
       document.getElementById('photo-preview-img').style.display = '';
@@ -1896,18 +1923,39 @@
       alert('Please fill in Category, Product Name and Price.');
       return;
     }
+    const offerVal = document.getElementById('product-offer').value;
+    const offerNum = offerVal ? Number(offerVal) : null;
+    const priceNum = Number(price);
+    const isStrike = document.getElementById('product-strike-offer')?.checked || false;
+
+    let sellingPrice = priceNum;
+    let origPrice = priceNum;
+    if (offerNum && offerNum > 0 && isStrike) {
+      sellingPrice = Math.round(priceNum * (1 - offerNum / 100));
+      origPrice = priceNum;
+    }
+
+    const idx = editingProductId ? adminProducts.findIndex(x => x.id === editingProductId) : -1;
+    const existingP = idx > -1 ? adminProducts[idx] : {};
+
     const product = {
-      id: editingProductId || uid(),
+      ...existingP,
+      id: editingProductId || ('p-' + uid()),
       name,
       category,
       subcategory: getSelectedSubcategoryInModal(),
-      price: Number(price),
-      offer: document.getElementById('product-offer').value ? Number(document.getElementById('product-offer').value) : null,
-      photo: photoDataUrl || '',
+      price: sellingPrice,
+      originalPrice: origPrice,
+      rawPrice: priceNum,
+      discount: offerNum || 0,
+      offer: offerNum,
+      strikeOffer: isStrike,
+      photo: photoDataUrl || existingP.photo || '',
+      image: photoDataUrl || existingP.image || 'images/img-saree-red.jpg',
     };
+
     if (editingProductId) {
-      const idx = adminProducts.findIndex(x => x.id === editingProductId);
-      if (idx > -1) adminProducts[idx] = product;
+      adminProducts[idx] = product;
     } else {
       adminProducts.push(product);
     }

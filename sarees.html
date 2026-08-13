@@ -565,7 +565,7 @@
               <!-- 3. Price / Discount -->
               <div class="flex items-baseline space-x-2 pt-2">
                 <span class="text-base font-bold text-brand-burgundy">₹ ${product.price.toLocaleString("en-IN")}</span>
-                ${product.originalPrice > product.price ? `
+                ${(product.strikeOffer === true || (product.strikeOffer === undefined && product.originalPrice > product.price)) && product.originalPrice > product.price ? `
                   <span class="text-xs text-gray-400 line-through">₹ ${product.originalPrice.toLocaleString("en-IN")}</span>
                   <span class="text-[10px] font-bold text-green-700">(${product.discount}% OFF)</span>
                 ` : ""}
