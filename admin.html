@@ -1058,6 +1058,7 @@
   let categories = loadCategories();
   let adminProducts = loadAdminProducts();
   let currentCategoryId = null;
+  let editingCategoryId = null;
   let editingProductId = null;
   let editItemTarget = null; // { catId, groupId, itemIdx }
   let photoDataUrl = null;
@@ -1279,39 +1280,60 @@
 
   // ─ Add Category ─
   function confirmAddCategory() {
-    const name = document.getElementById('new-cat-name').value.trim();
-    if (!name) { document.getElementById('new-cat-name').focus(); return; }
-    const icon = document.getElementById('new-cat-icon').value.trim() || '🛍️';
-    const desc = document.getElementById('new-cat-desc').value.trim();
+    const elName = document.getElementById('new-cat-name');
+    const name = elName ? elName.value.trim() : '';
+    if (!name) { if (elName) elName.focus(); return; }
+    const elIcon = document.getElementById('new-cat-icon');
+    const icon = elIcon ? elIcon.value.trim() : '🛍️';
+    const elDesc = document.getElementById('new-cat-desc');
+    const desc = elDesc ? elDesc.value.trim() : '';
     const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '-' + uid();
     categories.push({ id, name, icon, desc, groups: [] });
     saveCategories();
     renderCategoryGrid();
     populateAddProductPageSelects();
     closeModal('modal-add-category');
-    document.getElementById('new-cat-name').value = '';
-    document.getElementById('new-cat-icon').value = '';
-    document.getElementById('new-cat-desc').value = '';
+    if (elName) elName.value = '';
+    if (elIcon) elIcon.value = '';
+    if (elDesc) elDesc.value = '';
   }
 
   function openEditCategory(catId) {
     const cat = getCat(catId);
     if (!cat) return;
     editingCategoryId = catId;
-    document.getElementById('edit-cat-name').value = cat.name || '';
-    document.getElementById('edit-cat-icon').value = cat.icon || '';
-    document.getElementById('edit-cat-desc').value = cat.desc || '';
+
+    const elName = document.getElementById('edit-cat-name');
+    if (elName) elName.value = cat.name || '';
+
+    const elIcon = document.getElementById('edit-cat-icon');
+    if (elIcon) elIcon.value = cat.icon || '';
+
+    const elDesc = document.getElementById('edit-cat-desc');
+    if (elDesc) elDesc.value = cat.desc || '';
+
     openModal('modal-edit-category');
   }
 
   function confirmEditCategory() {
-    const name = document.getElementById('edit-cat-name').value.trim();
-    if (!name || !editingCategoryId) return;
+    const elName = document.getElementById('edit-cat-name');
+    const name = elName ? elName.value.trim() : '';
+
+    if (!name || !editingCategoryId) {
+      if (elName && !name) elName.focus();
+      return;
+    }
+
     const cat = getCat(editingCategoryId);
     if (cat) {
       cat.name = name;
-      cat.icon = document.getElementById('edit-cat-icon').value.trim() || '🛍️';
-      cat.desc = document.getElementById('edit-cat-desc').value.trim();
+
+      const elIcon = document.getElementById('edit-cat-icon');
+      if (elIcon) cat.icon = elIcon.value.trim();
+
+      const elDesc = document.getElementById('edit-cat-desc');
+      if (elDesc) cat.desc = elDesc.value.trim();
+
       saveCategories();
       renderCategoryGrid();
       populateAddProductPageSelects();
