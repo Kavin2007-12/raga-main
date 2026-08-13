@@ -446,13 +446,65 @@ const PRODUCTS = [
   }
 ];
 
+function getSyncedProducts() {
+  const saved = (typeof localStorage !== "undefined") ? (localStorage.getItem('raga_admin_products_v2') || localStorage.getItem('raga_products')) : null;
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const savedMap = new Map();
+        parsed.forEach(p => {
+          const imgSrc = (p.photo && p.photo.trim() !== '') ? p.photo : (p.image && p.image.trim() !== '' ? p.image : 'images/img-saree-red.jpg');
+          savedMap.set(p.id, {
+            ...p,
+            image: imgSrc,
+            hoverImage: (p.hoverImage && p.hoverImage.trim() !== '') ? p.hoverImage : imgSrc
+          });
+        });
+
+        const result = [];
+        // Preserve order of saved products
+        parsed.forEach(p => {
+          if (savedMap.has(p.id)) {
+            result.push(savedMap.get(p.id));
+            savedMap.delete(p.id);
+          }
+        });
+
+        // Add any default static products not in saved
+        PRODUCTS.forEach(dp => {
+          if (!result.some(x => x.id === dp.id)) {
+            const imgSrc = (dp.photo && dp.photo.trim() !== '') ? dp.photo : (dp.image || 'images/img-saree-red.jpg');
+            result.push({
+              ...dp,
+              image: imgSrc,
+              hoverImage: dp.hoverImage || imgSrc
+            });
+          }
+        });
+
+        return result;
+      }
+    } catch(e) {}
+  }
+
+  return PRODUCTS.map(p => {
+    const imgSrc = (p.photo && p.photo.trim() !== '') ? p.photo : (p.image || 'images/img-saree-red.jpg');
+    return {
+      ...p,
+      image: imgSrc,
+      hoverImage: p.hoverImage || imgSrc
+    };
+  });
+}
+
 // Helper functions for E-commerce State and filtering
 const ProductsDB = {
-  getAll: () => PRODUCTS,
+  getAll: () => getSyncedProducts(),
   
-  getById: (id) => PRODUCTS.find(p => p.id === id),
+  getById: (id) => getSyncedProducts().find(p => p.id === id),
   
-  getByCategory: (category) => PRODUCTS.filter(p => p.category === category),
+  getByCategory: (category) => getSyncedProducts().filter(p => p.category === category),
   
   filterProducts: (products, filters) => {
     return products.filter(product => {
