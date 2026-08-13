@@ -519,18 +519,17 @@ function injectFooter() {
 
           <!-- Column 4: Contact Us & Socials -->
           <div>
-            <h4 class="font-serif text-[13px] font-bold text-brand-burgundy uppercase tracking-wider mb-6 cursor-pointer" onclick="openInfoModal('contact')">Contact Us</h4>
-            <ul class="space-y-3.5 text-xs font-semibold text-brand-charcoal/80 mb-6">
-              <li class="leading-relaxed">
-                <span class="text-brand-burgundy font-bold block mb-1">📍 From / Address:</span>
+            <h4 class="font-serif text-[13px] font-bold text-brand-burgundy uppercase tracking-wider mb-6">Contact Us</h4>
+            <ul class="space-y-3 text-xs font-semibold text-brand-charcoal/80 mb-6">
+              <li><a href="tel:+918754291999" class="hover:text-brand-burgundy transition flex items-center gap-2"><span>📞</span> <span>+91 87542 91999</span></a></li>
+              <li><a href="mailto:customercare@ragaboutique.co.in" class="hover:text-brand-burgundy transition flex items-center gap-2"><span>✉️</span> <span>customercare@ragaboutique.co.in</span></a></li>
+              <li class="leading-relaxed pt-1">
+                <span class="text-brand-burgundy font-bold block mb-1">📍 Address:</span>
                 No. 21, 22 & 23, Municipality Building,<br>
                 Santhaipettai Bus Stop,<br>
                 Erode Main Road,<br>
                 Tiruchengode – 637 211.
               </li>
-              <li><a href="tel:+918754291999" class="hover:text-brand-burgundy transition">📞 +91 87542 91999</a></li>
-              <li><a href="mailto:customercare@ragaboutique.co.in" class="hover:text-brand-burgundy transition">✉️ customercare@ragaboutique.co.in</a></li>
-              <li><a href="javascript:void(0)" onclick="openInfoModal('contact')" class="hover:text-brand-burgundy transition font-bold text-brand-burgundy">View Contact Details</a></li>
             </ul>
             
             <!-- Social Icons (Burgundy fill matching screenshot) -->

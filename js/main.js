@@ -810,16 +810,6 @@ const INFO_DATA = {
       <p class="mb-4">We are here to assist you with your orders, custom handloom styling, and boutique queries.</p>
       
       <div class="space-y-4 text-xs">
-        <div class="bg-brand-cream/40 p-4 border border-brand-gold/25 rounded-md">
-          <h4 class="font-bold text-brand-burgundy uppercase text-xs tracking-wider mb-2">📍 From / Store Address</h4>
-          <p class="text-brand-charcoal font-semibold leading-relaxed">
-            No. 21, 22 & 23, Municipality Building,<br>
-            Santhaipettai Bus Stop,<br>
-            Erode Main Road,<br>
-            Tiruchengode – 637 211.
-          </p>
-        </div>
-
         <div class="bg-white p-4 border border-brand-gold/15 rounded-md space-y-2.5">
           <div>
             <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">📞 Phone Number</h5>
@@ -829,10 +819,16 @@ const INFO_DATA = {
             <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">✉️ Email Address</h5>
             <p class="text-brand-charcoal font-semibold"><a href="mailto:customercare@ragaboutique.co.in" class="hover:text-brand-burgundy transition">customercare@ragaboutique.co.in</a></p>
           </div>
-          <div>
-            <h5 class="font-bold text-brand-burgundy uppercase text-[11px] tracking-wider mb-0.5">⏰ Working Hours</h5>
-            <p class="text-gray-600 font-medium">Monday – Sunday: 10:00 AM – 9:00 PM IST</p>
-          </div>
+        </div>
+
+        <div class="bg-brand-cream/40 p-4 border border-brand-gold/25 rounded-md">
+          <h4 class="font-bold text-brand-burgundy uppercase text-xs tracking-wider mb-2">📍 Address</h4>
+          <p class="text-brand-charcoal font-semibold leading-relaxed">
+            No. 21, 22 & 23, Municipality Building,<br>
+            Santhaipettai Bus Stop,<br>
+            Erode Main Road,<br>
+            Tiruchengode – 637 211.
+          </p>
         </div>
       </div>
     `
