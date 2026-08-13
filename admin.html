@@ -1287,16 +1287,6 @@
       `;
     }).join('');
 
-    html += `
-      <div class="cat-box fade-in flex flex-col items-center justify-center p-8 border-2 border-dashed border-brand-gold/30 hover:border-brand-burgundy bg-brand-cream/20 text-center cursor-pointer transition-all" onclick="openModal('modal-add-category')">
-        <div class="w-12 h-12 rounded-full bg-brand-burgundy/10 flex items-center justify-center text-brand-burgundy mb-3">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        </div>
-        <h3 class="font-serif text-base font-bold text-brand-burgundy mb-1">+ Add New Category</h3>
-        <p class="text-xs text-gray-400">Create a new category for your store</p>
-      </div>
-    `;
-
     grid.innerHTML = html;
     populateAddProductPageSelects();
   }
