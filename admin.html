@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="images/raga_favicon.png">
   <meta name="robots" content="noindex, nofollow">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -602,9 +603,17 @@
     <!-- ═══ TRANSACTIONS VIEW (Google Pay Style) ═══ -->
     <div id="view-transactions" class="view fade-in">
       <!-- Header -->
-      <div class="mb-5">
-        <h2 class="font-serif text-xl font-bold text-brand-burgundy">Transactions History</h2>
-        <p class="text-xs text-gray-500 mt-0.5">Simple, clean record of payment transactions and Cash on Delivery orders.</p>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-brand-burgundy">Transactions History</h2>
+          <p class="text-xs text-gray-500 mt-0.5">Simple, clean record of payment transactions and Cash on Delivery orders.</p>
+        </div>
+        <button onclick="exportTransactionsExcel()" class="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-sm transition-all border border-emerald-800/20 shrink-0">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Export Excel
+        </button>
       </div>
 
       <!-- Controls & Search Bar -->
@@ -2360,12 +2369,17 @@
         status = (o.paymentStatus === 'Paid') ? 'Paid' : 'Pending';
       }
 
+      const customerEmail = (o.customer && o.customer.email) ? o.customer.email : (o.customer && o.customer.name ? o.customer.name.toLowerCase().replace(/\s+/g,'.') + '@example.com' : 'customer@example.com');
+      const customerMobile = (o.customer && o.customer.phone) ? o.customer.phone : '9876543210';
+
       let formattedDate = o.date || '12 Aug 2026, 10:42 AM';
 
       list.push({
         id: o.id,
         productName: productName,
         customerName: customerName,
+        customerEmail: customerEmail,
+        customerMobile: customerMobile,
         amount: Number(o.totalAmount) || 0,
         paymentMethod: method,
         status: status,
@@ -2374,6 +2388,8 @@
     });
     return list;
   }
+
+  let currentFilteredTxns = null;
 
   function getAdminTransactions() {
     return generateTransactionsFromOrders();
@@ -2421,7 +2437,72 @@
       list.sort((a, b) => a.amount - b.amount);
     }
 
+    currentFilteredTxns = list;
     renderTransactionsTable(list);
+  }
+
+  function exportTransactionsExcel() {
+    const listToExport = (currentFilteredTxns && currentFilteredTxns.length >= 0) ? currentFilteredTxns : getAdminTransactions();
+
+    if (!listToExport || listToExport.length === 0) {
+      alert('No transactions available to export.');
+      return;
+    }
+
+    // Excel columns: Customer Name | Email | Mobile Number | Order | Amount | Payment Method | Payment Status | Date & Time
+    const data = [
+      ["Customer Name", "Email", "Mobile Number", "Order", "Amount", "Payment Method", "Payment Status", "Date & Time"]
+    ];
+
+    listToExport.forEach(t => {
+      let statusText = t.status;
+      if (t.paymentMethod === 'Cash on Delivery') {
+        if (t.status === 'Paid') statusText = 'Cash on Delivery • Paid';
+        else if (t.status === 'Pending') statusText = 'Cash on Delivery • Pending';
+        else if (t.status === 'Cancelled') statusText = 'Cash on Delivery • Cancelled';
+        else if (t.status === 'Refunded') statusText = 'Cash on Delivery • Returned';
+      } else {
+        if (t.status === 'Paid') statusText = `Paid • ${t.paymentMethod}`;
+        else if (t.status === 'Pending') statusText = `Pending • ${t.paymentMethod}`;
+        else if (t.status === 'Cancelled') statusText = `Cancelled • ${t.paymentMethod}`;
+        else if (t.status === 'Refunded') statusText = `Refunded • ${t.paymentMethod}`;
+      }
+
+      data.push([
+        t.customerName || 'Customer',
+        t.customerEmail || '—',
+        t.customerMobile || '—',
+        t.productName || t.id || 'Order',
+        Number(t.amount) || 0,
+        t.paymentMethod || 'UPI',
+        statusText,
+        t.date || ''
+      ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    ws['!cols'] = [
+      { wch: 22 }, // Customer Name
+      { wch: 28 }, // Email
+      { wch: 18 }, // Mobile Number
+      { wch: 32 }, // Order
+      { wch: 14 }, // Amount
+      { wch: 20 }, // Payment Method
+      { wch: 28 }, // Payment Status
+      { wch: 22 }  // Date & Time
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions History");
+
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const fileName = `Transaction_History_${yyyy}-${mm}-${dd}.xlsx`;
+
+    XLSX.writeFile(wb, fileName);
   }
 
   function renderTransactionsTable(txnsList) {
