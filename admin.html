@@ -597,97 +597,51 @@
       </div>
     </div>
 
-    <!-- ═══ TRANSACTIONS VIEW ═══ -->
+    <!-- ═══ TRANSACTIONS VIEW (Google Pay Style) ═══ -->
     <div id="view-transactions" class="view fade-in">
       <!-- Header -->
-      <div class="mb-6">
+      <div class="mb-5">
         <h2 class="font-serif text-xl font-bold text-brand-burgundy">Transactions History</h2>
-        <p class="text-xs text-gray-500">Track, filter, and review customer payment transactions with full contact and order details.</p>
-      </div>
-
-      <!-- Stat Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(112,33,82,.1)">
-            <svg class="h-5 w-5 text-brand-burgundy" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          </div>
-          <div class="text-2xl font-bold text-brand-burgundy font-serif" id="stat-txn-total">0</div>
-          <div class="text-[11px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Total Transactions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(16,185,129,.12)">
-            <span class="text-lg">💰</span>
-          </div>
-          <div class="text-2xl font-bold text-emerald-700 font-serif" id="stat-txn-revenue">₹0</div>
-          <div class="text-[11px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Paid Revenue</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(59,130,246,.12)">
-            <span class="text-lg">💳</span>
-          </div>
-          <div class="text-2xl font-bold text-blue-600 font-serif" id="stat-txn-prepaid">0</div>
-          <div class="text-[11px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Prepaid Online</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(217,119,6,.12)">
-            <span class="text-lg">💵</span>
-          </div>
-          <div class="text-2xl font-bold text-amber-600 font-serif" id="stat-txn-cod">0</div>
-          <div class="text-[11px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Cash on Delivery</div>
-        </div>
+        <p class="text-xs text-gray-500 mt-0.5">Simple, clean record of payment transactions and Cash on Delivery orders.</p>
       </div>
 
       <!-- Controls & Search Bar -->
-      <div class="bg-white rounded-xl border overflow-hidden mb-6" style="border-color:rgba(212,178,112,.18);box-shadow:0 2px 12px rgba(112,33,82,.06);">
-        <div class="px-5 py-3 border-b flex gap-3 items-center flex-wrap" style="border-color:rgba(212,178,112,.12);background:rgba(250,246,240,.5);">
-          <div class="relative flex-1 min-w-[240px]">
-            <input type="text" id="txn-search-input" placeholder="Search by Txn ID, Order ID, Name, Email, Mobile…" oninput="filterTransactionsTable()"
-              class="w-full border rounded-lg pl-9 pr-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
-            <svg class="h-4 w-4 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <div class="bg-white rounded-xl border border-brand-gold/20 p-3.5 shadow-sm mb-5">
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="relative flex-1 min-w-[220px]">
+            <input type="text" id="txn-search-input" placeholder="Search product or customer name..." oninput="filterTransactionsTable()"
+              class="w-full border rounded-lg pl-9 pr-3 py-1.5 text-xs focus:outline-none bg-brand-cream/20 border-brand-gold/25 focus:border-brand-burgundy">
+            <svg class="h-4 w-4 text-gray-400 absolute left-3 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
-          <select id="txn-status-filter" onchange="filterTransactionsTable()" class="border rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
+          <select id="txn-status-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
             <option value="">All Statuses</option>
-            <option value="Success">Success / Paid</option>
+            <option value="Paid">Paid</option>
             <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled / Failed</option>
             <option value="Refunded">Refunded</option>
-            <option value="Failed">Failed</option>
           </select>
-          <select id="txn-method-filter" onchange="filterTransactionsTable()" class="border rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
+          <select id="txn-method-filter" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
             <option value="">All Payment Methods</option>
-            <option value="Prepaid">Prepaid (Card/UPI)</option>
-            <option value="COD">Cash on Delivery (COD)</option>
+            <option value="UPI">UPI</option>
+            <option value="Credit/Debit Card">Credit/Debit Card</option>
+            <option value="Net Banking">Net Banking</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
           </select>
-          <select id="txn-sort-select" onchange="filterTransactionsTable()" class="border rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white" style="border-color:rgba(212,178,112,.3);">
+          <select id="txn-sort-select" onchange="filterTransactionsTable()" class="border border-brand-gold/25 rounded-lg px-3 py-1.5 text-xs focus:outline-none bg-white text-brand-charcoal font-medium">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="amount-high">Amount: High to Low</option>
             <option value="amount-low">Amount: Low to High</option>
           </select>
         </div>
+      </div>
 
-        <!-- Responsive Transactions Table -->
-        <div class="overflow-x-auto">
-          <table class="admin-table whitespace-nowrap">
-            <thead>
-              <tr>
-                <th>Transaction ID</th>
-                <th>Order ID</th>
-                <th>Customer Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Amount</th>
-                <th>Payment Method</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="transactions-tbody"></tbody>
-          </table>
-        </div>
-        <div id="transactions-empty" class="hidden text-center py-12 text-gray-400 text-sm">
-          No transaction records found matching your query.
-        </div>
+      <!-- Google Pay Style Transaction Cards List -->
+      <div id="transactions-list-container" class="space-y-3"></div>
+
+      <!-- Empty State -->
+      <div id="transactions-empty" class="hidden bg-white rounded-xl border border-brand-gold/20 p-10 text-center text-gray-400 text-sm shadow-sm">
+        No transaction records found matching your search.
       </div>
     </div>
 
@@ -1977,7 +1931,63 @@
     returned:  { label: 'Returned', icon: '🔄', badgeBg: 'bg-orange-100', badgeText: 'text-orange-800', border: 'border-orange-300' }
   };
 
-  const DEFAULT_ORDERS = [];
+  const DEFAULT_ORDERS = [
+    {
+      id: 'RAGA-1001',
+      title: 'Classic Ivory Saree',
+      totalAmount: 1999,
+      paymentMethod: 'UPI',
+      paymentStatus: 'Paid',
+      status: 'delivered',
+      date: '12 Aug 2026, 10:42 AM',
+      customer: { name: 'Kavya', email: 'kavya@example.com', phone: '9876543210' },
+      items: [{ title: 'Classic Ivory Saree', price: 1999, quantity: 1 }]
+    },
+    {
+      id: 'RAGA-1002',
+      title: 'Floral Maxi Dress',
+      totalAmount: 2499,
+      paymentMethod: 'Cash on Delivery',
+      paymentStatus: 'Pending',
+      status: 'pending',
+      date: '12 Aug 2026, 11:20 AM',
+      customer: { name: 'Priya', email: 'priya@example.com', phone: '9876543211' },
+      items: [{ title: 'Floral Maxi Dress', price: 2499, quantity: 1 }]
+    },
+    {
+      id: 'RAGA-1003',
+      title: 'Royal Crimson Banarasi Silk Saree',
+      totalAmount: 8499,
+      paymentMethod: 'Credit/Debit Card',
+      paymentStatus: 'Paid',
+      status: 'shipped',
+      date: '11 Aug 2026, 04:15 PM',
+      customer: { name: 'Ananya Sharma', email: 'ananya@example.com', phone: '9876543212' },
+      items: [{ title: 'Royal Crimson Banarasi Silk Saree', price: 8499, quantity: 1 }]
+    },
+    {
+      id: 'RAGA-1004',
+      title: 'Emerald Kanjivaram Silk Saree',
+      totalAmount: 12999,
+      paymentMethod: 'Cash on Delivery',
+      paymentStatus: 'Paid',
+      status: 'delivered',
+      date: '10 Aug 2026, 02:30 PM',
+      customer: { name: 'Deepika Nair', email: 'deepika@example.com', phone: '9876543213' },
+      items: [{ title: 'Emerald Kanjivaram Silk Saree', price: 12999, quantity: 1 }]
+    },
+    {
+      id: 'RAGA-1005',
+      title: 'Pastel Pink Chanderi Kurta Set',
+      totalAmount: 3250,
+      paymentMethod: 'Net Banking',
+      paymentStatus: 'Refunded',
+      status: 'cancelled',
+      date: '09 Aug 2026, 06:10 PM',
+      customer: { name: 'Sneha Reddy', email: 'sneha@example.com', phone: '9876543214' },
+      items: [{ title: 'Pastel Pink Chanderi Kurta Set', price: 3250, quantity: 1 }]
+    }
+  ];
 
   let adminOrders = loadOrders();
   let currentOrderFilter = 'all';
@@ -1985,8 +1995,13 @@
 
   function loadOrders() {
     const s = localStorage.getItem('raga_admin_orders_v2');
-    if (s) { try { return JSON.parse(s); } catch(e){} }
-    return [];
+    if (s) {
+      try {
+        const parsed = JSON.parse(s);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch(e){}
+    }
+    return DEFAULT_ORDERS;
   }
 
   function saveOrders() {
@@ -2341,35 +2356,49 @@
   function generateTransactionsFromOrders() {
     const list = [];
     (adminOrders || []).forEach(o => {
-      let status = 'Pending';
-      if (o.paymentStatus === 'Paid') status = 'Success';
-      else if (o.paymentStatus === 'Refunded') status = 'Refunded';
-      else if (o.status === 'cancelled') status = 'Failed';
-      else if (o.status === 'delivered' || o.status === 'shipped' || o.status === 'confirmed' || o.status === 'packed') {
-        status = o.paymentMethod === 'Prepaid' ? 'Success' : 'Pending';
+      let productName = 'Handloom Saree';
+      if (o.items && o.items.length > 0) {
+        const first = o.items[0];
+        productName = first.title || first.name || 'Handloom Product';
+        if (o.items.length > 1) {
+          productName += ` (+${o.items.length - 1} more)`;
+        }
+      } else if (o.title) {
+        productName = o.title;
       }
 
-      // Generate deterministic payment reference ID for auditability
-      let hash = 0;
-      const seed = o.id + (o.date || '');
-      for (let i = 0; i < seed.length; i++) {
-        hash = (hash << 5) - hash + seed.charCodeAt(i);
-        hash |= 0;
+      const customerName = (o.customer && o.customer.name) ? o.customer.name : 'Customer';
+
+      let method = o.paymentMethod || 'UPI';
+      if (method === 'COD' || method === 'Cash on Delivery' || method === 'Cash On Delivery') {
+        method = 'Cash on Delivery';
+      } else if (method === 'Prepaid') {
+        method = 'UPI';
       }
-      const refId = 'REF-' + Math.abs(hash).toString(36).toUpperCase() + Math.floor(1000 + Math.abs(hash % 9000));
+
+      let status = 'Pending';
+      if (o.paymentStatus === 'Paid' || o.status === 'delivered') {
+        status = 'Paid';
+      } else if (o.paymentStatus === 'Refunded' || o.status === 'returned') {
+        status = 'Refunded';
+      } else if (o.status === 'cancelled') {
+        status = 'Cancelled';
+      } else if (o.paymentStatus === 'Failed') {
+        status = 'Failed';
+      } else {
+        status = (o.paymentStatus === 'Paid') ? 'Paid' : 'Pending';
+      }
+
+      let formattedDate = o.date || '12 Aug 2026, 10:42 AM';
 
       list.push({
-        txnId: 'TXN-' + o.id.replace('#','').replace('RAGA-',''),
-        orderId: o.id,
-        customerName: (o.customer && o.customer.name) ? o.customer.name : 'Guest Customer',
-        customerEmail: (o.customer && o.customer.email) ? o.customer.email : (o.customer && o.customer.name ? o.customer.name.toLowerCase().replace(/\s+/g,'.') + '@example.com' : 'customer@example.com'),
-        customerMobile: (o.customer && o.customer.phone) ? o.customer.phone : '—',
+        id: o.id,
+        productName: productName,
+        customerName: customerName,
         amount: Number(o.totalAmount) || 0,
-        paymentMethod: o.paymentMethod || 'Prepaid',
-        paymentRef: refId,
+        paymentMethod: method,
         status: status,
-        date: o.date || new Date().toLocaleDateString(),
-        items: o.items || []
+        date: formattedDate
       });
     });
     return list;
@@ -2381,24 +2410,8 @@
 
   function updateTransactionsStats() {
     const txns = getAdminTransactions();
-    const totalCount = txns.length;
-    const paidRevenue = txns
-      .filter(t => t.status === 'Success')
-      .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const prepaidCount = txns.filter(t => t.paymentMethod === 'Prepaid').length;
-    const codCount = txns.filter(t => t.paymentMethod === 'COD').length;
-
-    const elTotal = document.getElementById('stat-txn-total');
-    if (elTotal) elTotal.textContent = totalCount;
-    const elRev = document.getElementById('stat-txn-revenue');
-    if (elRev) elRev.textContent = '₹' + paidRevenue.toLocaleString('en-IN');
-    const elPrepaid = document.getElementById('stat-txn-prepaid');
-    if (elPrepaid) elPrepaid.textContent = prepaidCount;
-    const elCod = document.getElementById('stat-txn-cod');
-    if (elCod) elCod.textContent = codCount;
-
     const sbTxn = document.getElementById('sb-txn-count');
-    if (sbTxn) sbTxn.textContent = totalCount;
+    if (sbTxn) sbTxn.textContent = txns.length;
   }
 
   function filterTransactionsTable() {
@@ -2410,73 +2423,133 @@
     let list = getAdminTransactions();
 
     if (statusFilter) {
-      list = list.filter(t => t.status === statusFilter);
+      if (statusFilter === 'Cancelled') {
+        list = list.filter(t => t.status === 'Cancelled' || t.status === 'Failed');
+      } else {
+        list = list.filter(t => t.status === statusFilter);
+      }
     }
     if (methodFilter) {
       list = list.filter(t => t.paymentMethod === methodFilter);
     }
     if (q) {
       list = list.filter(t => {
-        const txnMatch = t.txnId.toLowerCase().includes(q);
-        const orderMatch = t.orderId.toLowerCase().includes(q);
+        const prodMatch = (t.productName || '').toLowerCase().includes(q);
         const nameMatch = (t.customerName || '').toLowerCase().includes(q);
-        const emailMatch = (t.customerEmail || '').toLowerCase().includes(q);
-        const mobileMatch = (t.customerMobile || '').toLowerCase().includes(q);
-        return txnMatch || orderMatch || nameMatch || emailMatch || mobileMatch;
+        return prodMatch || nameMatch;
       });
     }
 
-    if (sortVal === 'newest') list.sort((a, b) => new Date(b.date) - new Date(a.date));
-    else if (sortVal === 'oldest') list.sort((a, b) => new Date(a.date) - new Date(b.date));
-    else if (sortVal === 'amount-high') list.sort((a, b) => b.amount - a.amount);
-    else if (sortVal === 'amount-low') list.sort((a, b) => a.amount - b.amount);
+    if (sortVal === 'newest') {
+      // Keeps list in newest order
+    } else if (sortVal === 'oldest') {
+      list = list.slice().reverse();
+    } else if (sortVal === 'amount-high') {
+      list.sort((a, b) => b.amount - a.amount);
+    } else if (sortVal === 'amount-low') {
+      list.sort((a, b) => a.amount - b.amount);
+    }
 
     renderTransactionsTable(list);
   }
 
   function renderTransactionsTable(txnsList) {
-    const tbody = document.getElementById('transactions-tbody');
+    const container = document.getElementById('transactions-list-container');
     const empty = document.getElementById('transactions-empty');
 
-    if (!tbody) return;
+    if (!container) return;
 
     if (!txnsList || txnsList.length === 0) {
-      tbody.innerHTML = '';
+      container.innerHTML = '';
       if (empty) empty.classList.remove('hidden');
       return;
     }
 
     if (empty) empty.classList.add('hidden');
 
-    tbody.innerHTML = txnsList.map(t => {
-      let badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300';
-      if (t.status === 'Success') badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-      else if (t.status === 'Refunded') badgeStyle = 'bg-orange-100 text-orange-800 border-orange-300';
-      else if (t.status === 'Failed') badgeStyle = 'bg-rose-100 text-rose-800 border-rose-300';
+    container.innerHTML = txnsList.map(t => {
+      const isCOD = t.paymentMethod === 'Cash on Delivery';
+      const isPaid = t.status === 'Paid';
+      const isPending = t.status === 'Pending';
+      const isCancelled = t.status === 'Cancelled' || t.status === 'Failed';
+      const isRefunded = t.status === 'Refunded';
+
+      let amountText = '₹' + Number(t.amount).toLocaleString('en-IN');
+      let amountColorClass = 'text-brand-charcoal';
+
+      if (isPaid && !isCOD) {
+        amountText = '+ ₹' + Number(t.amount).toLocaleString('en-IN');
+        amountColorClass = 'text-emerald-700';
+      } else if (isPaid && isCOD) {
+        amountText = '₹' + Number(t.amount).toLocaleString('en-IN');
+        amountColorClass = 'text-emerald-700';
+      } else if (isCancelled) {
+        amountColorClass = 'text-rose-600 line-through opacity-70';
+      }
+
+      let statusText = '';
+      let badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
+
+      if (isCOD) {
+        if (isPaid) {
+          statusText = 'Cash on Delivery • Paid';
+          badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
+        } else if (isPending) {
+          statusText = 'Cash on Delivery • Pending';
+          badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
+        } else if (isCancelled) {
+          statusText = 'Cash on Delivery • Cancelled';
+          badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/60';
+        } else if (isRefunded) {
+          statusText = 'Cash on Delivery • Returned';
+          badgeClass = 'bg-orange-50 text-orange-700 border-orange-200/60';
+        } else {
+          statusText = `Cash on Delivery • ${t.status}`;
+        }
+      } else {
+        if (isPaid) {
+          statusText = `Paid • ${t.paymentMethod}`;
+          badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
+        } else if (isPending) {
+          statusText = `Pending • ${t.paymentMethod}`;
+          badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/60';
+        } else if (isCancelled) {
+          statusText = `Cancelled • ${t.paymentMethod}`;
+          badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/60';
+        } else if (isRefunded) {
+          statusText = `Refunded • ${t.paymentMethod}`;
+          badgeClass = 'bg-orange-50 text-orange-700 border-orange-200/60';
+        } else {
+          statusText = `${t.status} • ${t.paymentMethod}`;
+        }
+      }
 
       return `
-        <tr class="hover:bg-brand-cream/30 transition-colors">
-          <td class="font-mono text-xs font-bold text-brand-burgundy">${esc(t.txnId)}</td>
-          <td class="font-mono text-xs text-gray-600">${esc(t.orderId)}</td>
-          <td class="font-semibold text-xs text-brand-charcoal">${esc(t.customerName)}</td>
-          <td class="text-xs text-gray-600">${esc(t.customerEmail)}</td>
-          <td class="text-xs text-gray-600">${esc(t.customerMobile)}</td>
-          <td class="font-bold text-xs text-brand-burgundy">₹${Number(t.amount).toLocaleString('en-IN')}</td>
-          <td>
-            <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${t.paymentMethod==='Prepaid' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-              ${esc(t.paymentMethod)}
-            </span>
-          </td>
-          <td>
-            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeStyle}">
-              ${esc(t.status)}
-            </span>
-          </td>
-          <td class="text-xs text-gray-500">${esc(t.date)}</td>
-          <td>
-            <button class="btn-edit text-[11px]" onclick="openTransactionDetails('${t.txnId}')">View Details</button>
-          </td>
-        </tr>
+        <div class="bg-white p-4 rounded-xl border border-brand-gold/20 shadow-sm hover:border-brand-burgundy/30 transition-all flex items-center justify-between gap-4">
+          <!-- Left Side: Product, Customer, Date -->
+          <div class="space-y-1 text-left min-w-0 flex-1">
+            <h4 class="font-serif text-sm font-bold text-brand-burgundy truncate">${esc(t.productName)}</h4>
+            <p class="text-xs font-semibold text-brand-charcoal">${esc(t.customerName)}</p>
+            <p class="text-[11px] text-gray-400 font-medium flex items-center gap-1">
+              <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              ${esc(t.date)}
+            </p>
+          </div>
+
+          <!-- Right Side: Amount, Payment Status & Method -->
+          <div class="text-right shrink-0 space-y-1">
+            <div class="font-bold text-base ${amountColorClass}">
+              ${amountText}
+            </div>
+            <div>
+              <span class="inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badgeClass}">
+                ${esc(statusText)}
+              </span>
+            </div>
+          </div>
+        </div>
       `;
     }).join('');
   }
